@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:mytictaconline/src/screens/gameScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   final GoogleSignInAccount googleSignInAccount;
@@ -127,9 +128,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void createGame(CollectionReference ref, String opponentId) {
+    String gameId = FirebaseAuth.instance.currentUser.uid + 'VS' + opponentId;
     ref
         .doc(FirebaseAuth.instance.currentUser.uid)
-        .collection(FirebaseAuth.instance.currentUser.uid + 'VS' + opponentId)
+        .collection(gameId)
         .add({
       "0": "",
       "1": "",
@@ -141,5 +143,6 @@ class _HomeScreenState extends State<HomeScreen> {
       "7": "",
       "8": "",
     });
+    Navigator.push(context, MaterialPageRoute(builder: (context) => GameScreen(gameId: gameId,),));
   }
 }
