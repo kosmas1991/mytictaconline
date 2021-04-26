@@ -16,7 +16,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
-  @override
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -128,11 +127,14 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void createGame(CollectionReference ref, String opponentId) {
-    String gameId = FirebaseAuth.instance.currentUser.uid + 'VS' + opponentId;
+    String gameId = FirebaseAuth.instance.currentUser.uid + ' VS ' + opponentId;
+    String revGameId =
+        opponentId + ' VS ' + FirebaseAuth.instance.currentUser.uid;
     ref
         .doc(FirebaseAuth.instance.currentUser.uid)
         .collection(gameId)
-        .add({
+        .doc('theGame')
+        .set({
       "0": "",
       "1": "",
       "2": "",
@@ -143,6 +145,24 @@ class _HomeScreenState extends State<HomeScreen> {
       "7": "",
       "8": "",
     });
-    Navigator.push(context, MaterialPageRoute(builder: (context) => GameScreen(gameId: gameId,),));
+    ref.doc(opponentId).collection(revGameId).doc('theGame').set({
+      "0": "",
+      "1": "",
+      "2": "",
+      "3": "",
+      "4": "",
+      "5": "",
+      "6": "",
+      "7": "",
+      "8": "",
+    });
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => GameScreen(
+            gameRef: ref.doc(FirebaseAuth.instance.currentUser.uid).collection(gameId).doc('theGame'),
+            opGameRef: ref.doc(opponentId).collection(revGameId).doc('theGame'),
+          ),
+        ));
   }
 }
