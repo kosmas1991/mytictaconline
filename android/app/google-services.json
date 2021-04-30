@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "67172401670-f7onipaadq4bui3ms95q679gv1h0h433.apps.googleusercontent.com",
+          "client_id": "67172401670-hlct1s5g8airoppt7nbt4v570uoackgt.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "gr.techzombie.mytictaconline",
-            "certificate_hash": "fcf10e17de09eba51e6210ebb97ba16542bd6a21"
+            "certificate_hash": "5ab00947017a681de39b91cc515b392cfcc45b0c"
           }
         },
         {

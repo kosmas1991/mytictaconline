@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mytictaconline/src/screens/gameScreen.dart';
+import 'activeGamesScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   final GoogleSignInAccount googleSignInAccount;
@@ -31,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
             (_selectedIndex == 0)
                 ? usersTab()
                 : (_selectedIndex == 1)
-                    ? Text('Active games list')
+                    ? ActiveGamesScreen()
                     : Text('coming soon')
           ],
         ),
@@ -132,8 +133,8 @@ class _HomeScreenState extends State<HomeScreen> {
         opponentId + ' VS ' + FirebaseAuth.instance.currentUser.uid;
     ref
         .doc(FirebaseAuth.instance.currentUser.uid)
-        .collection(gameId)
-        .doc('theGame')
+        .collection('VS')      //.collection(gameId)
+        .doc(gameId)
         .set({
       "0": "",
       "1": "",
@@ -144,8 +145,14 @@ class _HomeScreenState extends State<HomeScreen> {
       "6": "",
       "7": "",
       "8": "",
+      "player1": "${FirebaseAuth.instance.currentUser.uid}",
+      "player2": "$opponentId",
+      "turn": "player1"
     });
-    ref.doc(opponentId).collection(revGameId).doc('theGame').set({
+    ref
+        .doc(opponentId)
+        .collection('VS')
+        .doc(revGameId).set({
       "0": "",
       "1": "",
       "2": "",
@@ -155,13 +162,17 @@ class _HomeScreenState extends State<HomeScreen> {
       "6": "",
       "7": "",
       "8": "",
+      "player1": "${FirebaseAuth.instance.currentUser.uid}",
+      "player2": "$opponentId",
+      "turn": "player1"
     });
     Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => GameScreen(
-            gameRef: ref.doc(FirebaseAuth.instance.currentUser.uid).collection(gameId).doc('theGame'),
-            opGameRef: ref.doc(opponentId).collection(revGameId).doc('theGame'),
+            googleSignInAccount: widget.googleSignInAccount,
+            player1GameRef: ref.doc(FirebaseAuth.instance.currentUser.uid).collection('VS').doc(gameId),
+            player2GameRef: ref.doc(opponentId).collection('VS').doc(revGameId),
           ),
         ));
   }

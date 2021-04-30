@@ -39,7 +39,6 @@ class LoginScreen extends StatelessWidget {
                           padding:
                           MaterialStateProperty.all(EdgeInsets.all(15))),
                       onPressed: () {
-                        //TODO: Imple the google sign in later
                         signInWithGoogle(context);
                       },
                       child: Row(
