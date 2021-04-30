@@ -127,53 +127,65 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void createGame(CollectionReference ref, String opponentId) {
+  void createGame(CollectionReference ref, String opponentId) async{
     String gameId = FirebaseAuth.instance.currentUser.uid + ' VS ' + opponentId;
     String revGameId =
         opponentId + ' VS ' + FirebaseAuth.instance.currentUser.uid;
-    ref
-        .doc(FirebaseAuth.instance.currentUser.uid)
-        .collection('VS')      //.collection(gameId)
-        .doc(gameId)
-        .set({
-      "0": "",
-      "1": "",
-      "2": "",
-      "3": "",
-      "4": "",
-      "5": "",
-      "6": "",
-      "7": "",
-      "8": "",
-      "player1": "${FirebaseAuth.instance.currentUser.uid}",
-      "player2": "$opponentId",
-      "turn": "player1"
+    ref.doc(FirebaseAuth.instance.currentUser.uid).collection('VS').doc(gameId).get().then((value) async{
+      if (!value.exists) {
+        ref
+            .doc(FirebaseAuth.instance.currentUser.uid)
+            .collection('VS')      //.collection(gameId)
+            .doc(gameId)
+            .set({
+          "0": "",
+          "1": "",
+          "2": "",
+          "3": "",
+          "4": "",
+          "5": "",
+          "6": "",
+          "7": "",
+          "8": "",
+          "player1": "${FirebaseAuth.instance.currentUser.uid}",
+          "player2": "$opponentId",
+          "turn": "player1"
+        });
+        ref
+            .doc(opponentId)
+            .collection('VS')
+            .doc(revGameId).set({
+          "0": "",
+          "1": "",
+          "2": "",
+          "3": "",
+          "4": "",
+          "5": "",
+          "6": "",
+          "7": "",
+          "8": "",
+          "player1": "${FirebaseAuth.instance.currentUser.uid}",
+          "player2": "$opponentId",
+          "turn": "player1"
+        });
+        final result = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => GameScreen(
+                googleSignInAccount: widget.googleSignInAccount,
+                player1GameRef: ref.doc(FirebaseAuth.instance.currentUser.uid).collection('VS').doc(gameId),
+                player2GameRef: ref.doc(opponentId).collection('VS').doc(revGameId),
+              ),
+            ));
+        if (result != null) {
+          ScaffoldMessenger.of(context)
+            ..removeCurrentSnackBar()
+            ..showSnackBar(SnackBar(content: Text("$result")));
+        }
+      }  else {
+        final snackBar = SnackBar(content: Text('Game already exists'));
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
     });
-    ref
-        .doc(opponentId)
-        .collection('VS')
-        .doc(revGameId).set({
-      "0": "",
-      "1": "",
-      "2": "",
-      "3": "",
-      "4": "",
-      "5": "",
-      "6": "",
-      "7": "",
-      "8": "",
-      "player1": "${FirebaseAuth.instance.currentUser.uid}",
-      "player2": "$opponentId",
-      "turn": "player1"
-    });
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => GameScreen(
-            googleSignInAccount: widget.googleSignInAccount,
-            player1GameRef: ref.doc(FirebaseAuth.instance.currentUser.uid).collection('VS').doc(gameId),
-            player2GameRef: ref.doc(opponentId).collection('VS').doc(revGameId),
-          ),
-        ));
   }
 }

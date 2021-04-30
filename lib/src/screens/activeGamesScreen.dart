@@ -40,8 +40,13 @@ class _ActiveGamesScreenState extends State<ActiveGamesScreen> {
                   itemBuilder: (context, index) {
                     String opString = getOpIdFromVSDoc(games[index].id);
                     return InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => GameScreen(player1GameRef: FirebaseFirestore.instance.collection('users').doc(uid).collection('VS').doc('${games[index].id}'),player2GameRef: FirebaseFirestore.instance.collection('users').doc(opString).collection('VS').doc(getrevGameId('${games[index].id}')),),));
+                      onTap: () async{
+                        final result = await Navigator.of(context).push(MaterialPageRoute(builder: (context) => GameScreen(player1GameRef: FirebaseFirestore.instance.collection('users').doc(uid).collection('VS').doc('${games[index].id}'),player2GameRef: FirebaseFirestore.instance.collection('users').doc(opString).collection('VS').doc(getrevGameId('${games[index].id}')),),));
+                        if (result != null) {
+                          ScaffoldMessenger.of(context)
+                            ..removeCurrentSnackBar()
+                            ..showSnackBar(SnackBar(content: Text("$result")));
+                        }
                       },
                       child: StreamBuilder<DocumentSnapshot>(
                         stream: FirebaseFirestore.instance.collection('users').doc(opString).snapshots(),

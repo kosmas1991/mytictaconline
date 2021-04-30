@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:mytictaconline/src/google_auth.dart';
 
 class GameScreen extends StatefulWidget {
   final DocumentReference player1GameRef;
@@ -18,6 +19,7 @@ class _GameScreenState extends State<GameScreen> {
   final String player1Symbol = 'o';
   final String player2Symbol = 'x';
   bool amIPlayer1;
+
   @override
   void initState() {
     widget.player1GameRef.get().then((value) {
@@ -156,8 +158,15 @@ class _GameScreenState extends State<GameScreen> {
         checkWin(myMap,"2","4","6",player1Symbol)
     ) {
       print('Player 1 won');
-      //Navigator.of(context).push(MaterialPageRoute(builder: (context) => ResultScreen(googleSignInAccount: widget.googleSignInAccount, isDraw: false, didWin: amIPlayer1? true : false,),));
-      Navigator.of(context).pop();
+      String returnTextForPlayer1;
+      if (amIPlayer1) {
+        returnTextForPlayer1 = 'You WON';
+      }  else{
+        returnTextForPlayer1 = 'You LOST';
+      }
+      Navigator.pop(context, returnTextForPlayer1);
+      widget.player1GameRef.delete();
+      widget.player2GameRef.delete();
     }
 
     if (checkWin(myMap,"0","1","2",player2Symbol) ||
@@ -170,8 +179,15 @@ class _GameScreenState extends State<GameScreen> {
         checkWin(myMap,"2","4","6",player2Symbol)
     ) {
       print('Player 2 won');
-      //Navigator.of(context).push(MaterialPageRoute(builder: (context) => ResultScreen(googleSignInAccount: widget.googleSignInAccount,isDraw: false, didWin: amIPlayer1? false : true,),));
-      Navigator.of(context).pop();
+      String returnTextForPlayer2;
+      if (!amIPlayer1) {
+        returnTextForPlayer2 = 'You WON';
+      }  else{
+        returnTextForPlayer2 = 'You LOST';
+      }
+      Navigator.pop(context, returnTextForPlayer2);
+      widget.player1GameRef.delete();
+      widget.player2GameRef.delete();
     }
     if (myMap["0"].toString() != '' &&
         myMap["1"].toString() != '' &&
@@ -183,10 +199,11 @@ class _GameScreenState extends State<GameScreen> {
         myMap["7"].toString() != '' &&
         myMap["8"].toString() != ''
     ) {
-      print('Draw');
-      //Navigator.of(context).push(MaterialPageRoute(builder: (context) => ResultScreen(googleSignInAccount: widget.googleSignInAccount,isDraw: true,),));
-      Navigator.of(context).pop();
+      print('DRAW');
+      String returnTextForDraw = 'DRAW';
+      Navigator.pop(context, returnTextForDraw);
+      widget.player1GameRef.delete();
+      widget.player2GameRef.delete();
     }
   }
-  Center endOfGameWidget() => Center(child: Text('have a winner'));
 }
