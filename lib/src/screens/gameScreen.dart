@@ -147,7 +147,7 @@ class _GameScreenState extends State<GameScreen> {
     return false;
   }
 
-  void checkWinAnytime(Map<String, dynamic> myMap) {
+  void checkWinAnytime(Map<String, dynamic> myMap) async{
     if (checkWin(myMap,"0","1","2",player1Symbol) ||
         checkWin(myMap,"3","4","5",player1Symbol) ||
         checkWin(myMap,"6","7","8",player1Symbol) ||
@@ -201,9 +201,9 @@ class _GameScreenState extends State<GameScreen> {
     ) {
       print('DRAW');
       String returnTextForDraw = 'DRAW';
+      await widget.player1GameRef.delete();
+      await widget.player2GameRef.delete();
       Navigator.pop(context, returnTextForDraw);
-      widget.player1GameRef.delete();
-      widget.player2GameRef.delete();
     }
   }
 }
